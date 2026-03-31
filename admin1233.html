@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI", Arial, sans-serif;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:#020617;
+  color:#fff;
+  position: relative;
+}
+
+/* ===== ISSUE LIST ===== */
+.container{
+  padding:30px;
+}
+
+h2{
+  margin-bottom:25px;
+}
+
+.card{
+  background:rgba(255,255,255,0.12);
+  padding:20px;
+  border-radius:15px;
+  margin-bottom:25px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.4);
+}
+
+.card img{
+  width:100%;
+  max-height:200px;
+  object-fit:cover;
+  border-radius:12px;
+  margin-top:12px;
+}
+
+.status{
+  margin-top:12px;
+  font-weight:bold;
+}
+
+/* ===== BUTTONS ===== */
+button{
+  margin-top:12px;
+  margin-right:10px;
+  padding:8px 16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.progress{
+  background:#facc15;
+}
+
+.progress:hover{
+  background:#fde047;
+}
+
+.resolved{
+  background:#22c55e;
+}
+
+.resolved:hover{
+  background:#4ade80;
+}
+
+/* ===== FOOTER LINKS ===== */
+.footer-links{
+  margin-top:30px;
+  text-align:center;
+}
+
+.footer-links a{
+  display:inline-block;
+  color:#ffcc00;
+  margin:0 15px;
+  text-decoration:none;
+  font-weight:500;
+}
+
+.footer-links a:hover{
+  text-decoration:underline;
+}
+
+/* ===== LANGUAGE TOGGLE BUTTON ===== */
+.lang-toggle{
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background:#ffcc00;
+  color:#020617;
+  border:none;
+  padding:12px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:18px;
+  font-weight:bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+/* Logo + Title */
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.header-left img{
+  width:50px;  /* logo size */
+  height:50px;
+  object-fit:contain;
+  border-radius:8px;
+}
+
+.header h2{
+  color:#ffcc00;
+}
+
+.lang-toggle:hover{
+  background:#fcd34d;
+}
+</style>
+</head>
+
+<body>
+
+
+<div class="container">
+    
+    
+
+  <h2 data-en="🛠 Admin – Reported Issues" data-od="🛠 ଏଡମିନ୍ – ରିପୋର୍ଟ କରାଯାଇଥିବା ସମସ୍ୟା">🛠 Admin – Reported Issues</h2>
+   <button class="lang-toggle" id="toggleLang">ଓ</button>
+  <div id="issues"></div>
+
+  <div class="footer-links">
+    <a href="r.html" data-en="← Back to User Page" data-od="← ୟୁଜର୍ ପେଜ୍‌କୁ ଫେରନ୍ତୁ">← Back to User Page</a>
+    <a href="aa.html" data-en="← Dashboard" data-od="← ଡ୍ୟାଶବୋର୍ଡ୍">← Dashboard</a>
+  </div>
+</div>
+
+<!-- Language toggle button -->
+
+
+<script>
+const issuesDiv = document.getElementById("issues");
+let reports = JSON.parse(localStorage.getItem("reports")) || [];
+
+// Render issues
+function renderIssues(){
+  issuesDiv.innerHTML = "";
+
+  if(reports.length === 0){
+    issuesDiv.innerHTML = "<p data-en='No issues reported yet.' data-od='ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ସମସ୍ୟା ରିପୋର୍ଟ ହୋଇନାହିଁ।'>No issues reported yet.</p>";
+    return;
+  }
+
+  reports.forEach((r, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <h3 data-en="${r.issue}" data-od="${r.issue}">${r.issue}</h3>
+      <p><b data-en="Location:" data-od="ସ୍ଥାନ:">Location:</b> ${r.location}</p>
+      <p><b data-en="Description:" data-od="ବିବରଣୀ:">Description:</b> ${r.description}</p>
+      <p><b data-en="Severity:" data-od="ତୀବ୍ରତା:">Severity:</b> ${r.severity}</p>
+      <p><b data-en="Date:" data-od="ତାରିଖ:">Date:</b> ${r.date}</p>
+      <img src="${r.image}">
+      <div class="status" data-en="Status: ${r.status || 'Pending'}" data-od="ସ୍ଥିତି: ${r.status || 'ପେଣ୍ଡିଂ'}">Status: ${r.status || 'Pending'}</div>
+
+      <button class="progress" onclick="updateStatus(${index}, 'In Progress')" data-en="In Progress" data-od="ଚାଲୁଛି">In Progress</button>
+      <button class="resolved" onclick="updateStatus(${index}, 'Resolved')" data-en="Resolved" data-od="ସମାଧାନ ହୋଇଛି">Resolved</button>
+    `;
+
+    issuesDiv.appendChild(card);
+  });
+}
+
+// Update status
+function updateStatus(index, status){
+  reports[index].status = status;
+  localStorage.setItem("reports", JSON.stringify(reports));
+  renderIssues();
+}
+
+// Language toggle
+let isOdia = false;
+document.getElementById("toggleLang").addEventListener("click", ()=>{
+  isOdia = !isOdia;
+
+  // Change all elements with data-en and data-od
+  document.querySelectorAll("[data-en]").forEach(el=>{
+    el.textContent = isOdia ? el.getAttribute("data-od") : el.getAttribute("data-en");
+  });
+
+  // Update button icon
+  document.getElementById("toggleLang").textContent = isOdia ? "EN" : "ଓ";
+});
+
+renderIssues();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Issue Report</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+body{
+  min-height:100vh;
+  color:#fff;
+  overflow-x:hidden;
+}
+
+/* ===== ANIMATED BACKGROUND ===== */
+.bg{
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+    url("r1.jpg") center/cover no-repeat;
+  animation:bgZoom 22s ease-in-out infinite alternate;
+  z-index:-2;
+}
+
+@keyframes bgZoom{
+  from{transform:scale(1);}
+  to{transform:scale(1.18);}
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at top,
+    rgba(255,255,255,0.12),
+    transparent 65%);
+  animation:float 12s ease-in-out infinite alternate;
+  z-index:-1;
+}
+
+@keyframes float{
+  from{transform:translateY(0);}
+  to{transform:translateY(-45px);}
+}
+
+/* ===== HEADER ===== */
+header{
+  padding:20px 40px;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(6px);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+header h1{
+  color:#ffcc00;
+}
+
+.lang-btn{
+  padding:8px 18px;
+  border:none;
+  border-radius:20px;
+  background:#ffcc00;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.lang-btn:hover{
+  transform:scale(1.1);
+}
+
+.container{
+  max-width:540px;
+  margin:45px auto;
+  background:rgba(255,255,255,0.16);
+  padding:32px;
+  border-radius:22px;
+  box-shadow:0 18px 40px rgba(0,0,0,0.6);
+  animation:fadeUp 1s ease;
+}
+
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(35px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+label{
+  display:block;
+  margin:16px 0 6px;
+  font-weight:bold;
+}
+
+input, select, textarea{
+  width:100%;
+  padding:11px;
+  border-radius:12px;
+  border:none;
+  outline:none;
+  font-size:14px;
+}
+
+textarea{
+  resize:none;
+  height:85px;
+}
+
+.upload-box{
+  border:2px dashed #ffcc00;
+  padding:22px;
+  text-align:center;
+  border-radius:14px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.upload-box input{
+  display:none;
+}
+
+button{
+  margin-top:22px;
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:26px;
+  background:#ffcc00;
+  color:#000;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.06);
+}
+
+.back,.next{
+  display:block;
+  text-align:center;
+  margin-top:18px;
+  color:#ffcc00;
+  text-decoration:none;
+  font-weight:bold;
+}
+.lang-toggle{
+  height: 50px;
+  width:100px;
+  padding:6px 14px;
+  font-size:12px;
+  text-align:right;
+  border:none;
+  border-radius:20px;
+  background:#ffcc00;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+  z-index:999;
+  box-shadow:0 6px 15px rgba(0,0,0,0.4);
+  transition:0.3s;
+}
+
+.lang-toggle:hover{
+  transform:scale(1.1);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="overlay"></div>
+
+<header>
+  <h1 id="title">User Issue Reporting</h1>
+  <button class="lang-toggle" onclick="toggleLanguage()">
+  EN / ଓଡ଼ିଆ
+  </button>
+</header>
+
+
+<div class="container">
+  <form>
+
+    <label id="lblIssue">Issue Type</label>
+    <select id="issueType">
+      <option>Pothole</option>
+      <option>Road Crack</option>
+      <option>Street Light Issue</option>
+      <option>Accident Zone</option>
+      <option>Other</option>
+    </select>
+
+    <label id="lblLocation">Location</label>
+    <input type="text" id="location" placeholder="Enter location or auto-detect">
+
+    <label id="lblDesc">Description</label>
+    <textarea id="desc" placeholder="Describe the issue briefly"></textarea>
+
+    <label id="lblUpload">Upload Image (UI Only)</label>
+    <label class="upload-box" id="uploadBox">
+      Click to upload image
+      <input type="file" accept="image/*">
+    </label>
+
+    <label id="lblSeverity">Severity</label>
+    <select id="severity">
+      <option>Low</option>
+      <option>Medium</option>
+      <option>High</option>
+    </select>
+
+    <button type="submit" id="submitBtn">Submit Report</button>
+
+  </form>
+
+  <a href="aa.html" class="back" id="backBtn"> Back to Dashboard</a>
+  <a href="admin1.html" class="next" id="nextbtn"> admin page</a>
+</div>
+
+<script>
+document.getElementById("issueForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const report = {
+    issue: issueType.value,
+    location: location.value,
+    description: desc.value,
+    severity: severity.value,
+    date: new Date().toLocaleString()
+  };
+
+  let data = JSON.parse(localStorage.getItem("reports")) || [];
+  data.push(report);
+  localStorage.setItem("reports", JSON.stringify(data));
+
+  window.location.href = "dashboard.html";
+});
+</script>
+
+</body>
+</html>
+
+
+
+   

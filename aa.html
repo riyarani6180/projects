@@ -1,0 +1,194 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Issue Dashboard</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+body{
+  min-height:100vh;
+  color:#fff;
+  overflow-x:hidden;
+}
+
+/* ===== BACKGROUND ===== */
+.bg{
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)),
+    url("ass.jpeg") center/cover no-repeat;
+  animation:bgZoom 25s ease-in-out infinite alternate;
+  z-index:-2;
+}
+
+@keyframes bgZoom{
+  from{transform:scale(1);}
+  to{transform:scale(1.15);}
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at top,
+    rgba(255,255,255,0.12),
+    transparent 65%);
+  animation:float 14s ease-in-out infinite alternate;
+  z-index:-1;
+}
+
+@keyframes float{
+  from{transform:translateY(0);}
+  to{transform:translateY(-40px);}
+}
+
+/* ===== HEADER ===== */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 40px;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(6px);
+}
+
+.header h2{
+  color:#ffcc00;
+}
+
+.lang-box{
+  background:#ffcc00;
+  color:#000;
+  padding:10px 18px;
+  border-radius:20px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* ===== CONTENT ===== */
+.container{
+  max-width:950px;
+  margin:45px auto;
+}
+
+.info{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:25px;
+  flex-wrap:wrap;
+}
+
+.info p,.info a{
+  color:#ffcc00;
+  font-weight:bold;z
+  text-decoration:none;
+}
+
+/* ===== CARD ===== */
+.card{
+  background:rgba(255,255,255,0.18);
+  backdrop-filter:blur(10px);
+  padding:22px;
+  border-radius:18px;
+  margin-bottom:18px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.6);
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="overlay"></div>
+
+<div class="header">
+  <h2 id="dashTitle"></h2>
+  <div class="lang-box" onclick="toggleLang()">EN / ଓଡ଼ିଆ</div>
+</div>
+
+<div class="container">
+
+  <div class="info">
+    <p id="authority"></p>
+    <a href="r.html" id="userLink"></a>
+  </div>
+
+  <div id="reports"></div>
+</div>
+
+<script>
+let currentLang = "en";
+
+/* ===== LANGUAGE DATA ===== */
+const text = {
+  en:{
+    title:"Issue Dashboard",
+    authority:"📞 Authority Contact: 1800-456-789",
+    userLink:"← Go to User Page",
+    issue:"Issue",
+    location:"Location",
+    description:"Description",
+    severity:"Severity",
+    date:"Date",
+    empty:"No issues reported."
+  },
+  od:{
+    title:"ସମସ୍ୟା ଡ୍ୟାସବୋର୍ଡ",
+    authority:"📞 କାର୍ଯ୍ୟାଳୟ ଯୋଗାଯୋଗ: 1800-456-789",
+    userLink:"← ବ୍ୟବହାରକାରୀ ପୃଷ୍ଠାକୁ ଯାଆନ୍ତୁ",
+    issue:"ସମସ୍ୟା",
+    location:"ସ୍ଥାନ",
+    description:"ବର୍ଣ୍ଣନା",
+    severity:"ଗମ୍ଭୀରତା",
+    date:"ତାରିଖ",
+    empty:"କୌଣସି ସମସ୍ୟା ରିପୋର୍ଟ ହୋଇନାହିଁ"
+  }
+};
+
+/* ===== LOAD REPORTS ===== */
+const reportsDiv = document.getElementById("reports");
+const data = JSON.parse(localStorage.getItem("reports")) || [];
+
+function render(){
+  document.getElementById("dashTitle").innerText = text[currentLang].title;
+  document.getElementById("authority").innerText = text[currentLang].authority;
+  document.getElementById("userLink").innerText = text[currentLang].userLink;
+
+  reportsDiv.innerHTML = "";
+
+  if(data.length === 0){
+    reportsDiv.innerHTML = `<p>${text[currentLang].empty}</p>`;
+    return;
+  }
+
+  data.forEach((r,i)=>{
+    reportsDiv.innerHTML += `
+      <div class="card">
+        <h3>Report ${i+1}</h3>
+        <p><b>${text[currentLang].issue}:</b> ${r.issue}</p>
+        <p><b>${text[currentLang].location}:</b> ${r.location}</p>
+        <p><b>${text[currentLang].description}:</b> ${r.description}</p>
+        <p><b>${text[currentLang].severity}:</b> ${r.severity}</p>
+        <p><b>${text[currentLang].date}:</b> ${r.date}</p>
+      </div>
+    `;
+  });
+}
+
+function toggleLang(){
+  currentLang = currentLang === "en" ? "od" : "en";
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>
